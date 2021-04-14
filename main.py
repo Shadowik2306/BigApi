@@ -36,6 +36,7 @@ class MainWindow(QMainWindow):
         response = requests.get(geo_link, params_geo).json()
         try:
             toponym = response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
+            self.addressLabel.setText(toponym['metaDataProperty']['GeocoderMetaData']['Address']['formatted'])
             self.first_cords = tuple(map(float, toponym['Point']['pos'].split()))
             self.onlyStatic()
             self.img.setFocus()
@@ -68,6 +69,7 @@ class MainWindow(QMainWindow):
 
     def delPoint(self):
         self.point = False
+        self.addressLabel.setText('')
         self.onlyStatic()
         self.img.setFocus()
 

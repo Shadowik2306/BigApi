@@ -15,23 +15,49 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout_2">
+    <property name="leftMargin">
+     <number>20</number>
+    </property>
+    <property name="topMargin">
+     <number>15</number>
+    </property>
+    <property name="rightMargin">
+     <number>20</number>
+    </property>
+    <property name="bottomMargin">
+     <number>15</number>
+    </property>
     <item row="0" column="1">
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0" colspan="3">
+      <item row="3" column="2">
+       <widget class="QPushButton" name="delPointBut">
+        <property name="text">
+         <string>Удалить точку</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" colspan="3">
        <widget class="QLabel" name="img">
         <property name="text">
          <string/>
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
+      <item row="3" column="0">
+       <widget class="QPushButton" name="view">
+        <property name="text">
+         <string>Смена вида</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
        <widget class="QPushButton" name="search">
         <property name="text">
          <string>Search</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QLineEdit" name="place">
         <property name="minimumSize">
          <size>
@@ -41,17 +67,26 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QPushButton" name="view">
-        <property name="text">
-         <string>Смена вида</string>
+      <item row="0" column="0" colspan="3">
+       <widget class="QLabel" name="addressLabel">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>21</height>
+         </size>
         </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QPushButton" name="delPointBut">
+        <property name="font">
+         <font>
+          <pointsize>15</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>Удалить точку</string>
+         <string/>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
