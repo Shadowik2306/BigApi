@@ -15,6 +15,8 @@ class MainWindow(QMainWindow):
         super(MainWindow, self).__init__()
         uic.loadUi('ui/untitled.ui', self)
         self.z = 7
+        self.l = 'map'
+        self.view.clicked.connect(self.change_view)
         self.search.clicked.connect(self.fine_new)
 
     def fine_new(self):
@@ -30,10 +32,16 @@ class MainWindow(QMainWindow):
         try:
             toponym = response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
             self.first_cords = tuple(map(float, toponym['Point']['pos'].split()))
+            self.onlyStatic()
+        except Exception:
+            pass
+
+    def onlyStatic(self):
+        try:
             static_link = 'https://static-maps.yandex.ru/1.x'
             params_static = {
                 'll': ','.join(map(str, self.first_cords)),
-                'l': 'map',
+                'l': self.l,
                 'z': self.z
             }
             response = requests.get(static_link, params_static)
@@ -45,22 +53,10 @@ class MainWindow(QMainWindow):
         except Exception:
             pass
 
-    def onlyStatic(self):
-        try:
-            static_link = 'https://static-maps.yandex.ru/1.x'
-            params_static = {
-                'll': ','.join(map(str, self.first_cords)),
-                'l': 'map',
-                'z': self.z
-            }
-            response = requests.get(static_link, params_static)
-            with open('map.jpg', 'wb') as file:
-                file.write(response.content)
-            self.pixmap = QPixmap('map.jpg')
-            self.img.setPixmap(self.pixmap)
-            self.img.setFocus()
-        except Exception:
-            pass
+    def change_view(self):
+        lst = ['map', 'sat', 'sat,skl']
+        self.l = lst[(lst.index(self.l) + 1) % 3]
+        self.onlyStatic()
 
     def keyPressEvent(self, event):
         k = (17 - self.z) * 10 ** -2
