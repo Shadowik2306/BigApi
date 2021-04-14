@@ -17,10 +17,13 @@ class MainWindow(QMainWindow):
         self.z = 7
         self.l = 'map'
         self.change = [0, 0]
+        self.point = False
         self.view.clicked.connect(self.change_view)
         self.search.clicked.connect(self.fine_new)
+        self.delPointBut.clicked.connect(self.delPoint)
 
     def fine_new(self):
+        self.point = True
         self.change = [0, 0]
         if len(self.place.text()) < 4:
             return
@@ -46,9 +49,10 @@ class MainWindow(QMainWindow):
                 'll': ','.join(map(str, (self.first_cords[0] + self.change[0],
                                          self.first_cords[1] + self.change[1]))),
                 'l': self.l,
-                'z': self.z,
-                'pt': f'{self.first_cords[0]},{self.first_cords[1]},pm2rdm'
+                'z': self.z
             }
+            if self.point:
+                params_static['pt'] = f'{self.first_cords[0]},{self.first_cords[1]},pm2rdm'
             response = requests.get(static_link, params_static)
             with open('map.jpg', 'wb') as file:
                 file.write(response.content)
@@ -61,6 +65,11 @@ class MainWindow(QMainWindow):
         lst = ['map', 'sat', 'sat,skl']
         self.l = lst[(lst.index(self.l) + 1) % 3]
         self.onlyStatic()
+
+    def delPoint(self):
+        self.point = False
+        self.onlyStatic()
+        self.img.setFocus()
 
     def keyPressEvent(self, event):
         k = (17 - self.z) * 10 ** -2
