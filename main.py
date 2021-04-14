@@ -42,14 +42,14 @@ class MainWindow(QMainWindow):
             params_static = {
                 'll': ','.join(map(str, self.first_cords)),
                 'l': self.l,
-                'z': self.z
+                'z': self.z,
+                'pt': f'{self.first_cords[0]},{self.first_cords[1]},pm2rdm'
             }
             response = requests.get(static_link, params_static)
             with open('map.jpg', 'wb') as file:
                 file.write(response.content)
             self.pixmap = QPixmap('map.jpg')
             self.img.setPixmap(self.pixmap)
-            self.img.setFocus()
         except Exception:
             pass
 
