@@ -16,11 +16,13 @@ class MainWindow(QMainWindow):
         uic.loadUi('ui/untitled.ui', self)
         self.z = 7
         self.l = 'map'
+        self.index = ''
         self.change = [0, 0]
         self.point = False
         self.view.clicked.connect(self.change_view)
         self.search.clicked.connect(self.fine_new)
         self.delPointBut.clicked.connect(self.delPoint)
+        self.indexCheckBox.stateChanged.connect(self.indexCheckBoxChange)
 
     def fine_new(self):
         self.point = True
@@ -36,16 +38,28 @@ class MainWindow(QMainWindow):
         response = requests.get(geo_link, params_geo).json()
         try:
             toponym = response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
-            address = toponym['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
+            self.address = toponym['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
+            try:
+                self.index += " " + \
+                        toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+            except Exception:
+                self.index = ''
+
             if self.indexCheckBox.isChecked():
-                address += " " + \
-                           toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
-            self.addressLabel.setText(address)
+                self.addressLabel.setText(self.address + self.index)
+            else:
+                self.addressLabel.setText(self.address)
             self.first_cords = tuple(map(float, toponym['Point']['pos'].split()))
             self.onlyStatic()
             self.img.setFocus()
         except Exception:
             pass
+
+    def indexCheckBoxChange(self):
+        if self.indexCheckBox.isChecked():
+            self.addressLabel.setText(self.address + self.index)
+        else:
+            self.addressLabel.setText(self.address)
 
     def onlyStatic(self):
         try:
