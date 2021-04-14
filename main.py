@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow,QApplication
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from PyQt5.QtGui import QPixmap
-import keyboard
 from PyQt5.QtCore import Qt
 import requests
 import sys
@@ -64,18 +63,19 @@ class MainWindow(QMainWindow):
             pass
 
     def keyPressEvent(self, event):
+        k = (17 - self.z) * 10 ** -2
         if event.key() == Qt.Key_PageUp:
             self.z += 1
         if event.key() == Qt.Key_PageDown:
             self.z -= 1
         if event.key() == Qt.Key_Up:
-            self.first_cords = (self.first_cords[0], self.first_cords[1] + 1/self.z)
+            self.first_cords = (self.first_cords[0], self.first_cords[1] + k)
         if event.key() == Qt.Key_Down:
-            self.first_cords = (self.first_cords[0], self.first_cords[1] - 1/self.z)
+            self.first_cords = (self.first_cords[0], self.first_cords[1] - k)
         if event.key() == Qt.Key_Left:
-            self.first_cords = (self.first_cords[0] - 1/self.z, self.first_cords[1])
+            self.first_cords = (self.first_cords[0] - k, self.first_cords[1])
         if event.key() == Qt.Key_Right:
-            self.first_cords = (self.first_cords[0] + 1/self.z, self.first_cords[1])
+            self.first_cords = (self.first_cords[0] + k, self.first_cords[1])
         self.onlyStatic()
 
 
