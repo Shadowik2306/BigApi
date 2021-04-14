@@ -30,10 +30,10 @@ class MainWindow(QMainWindow):
         response = requests.get(geo_link, params_geo).json()
         try:
             toponym = response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
-            first_cords = tuple(map(float, toponym['Point']['pos'].split()))
+            self.first_cords = tuple(map(float, toponym['Point']['pos'].split()))
             static_link = 'https://static-maps.yandex.ru/1.x'
             params_static = {
-                'll': ','.join(map(str, first_cords)),
+                'll': ','.join(map(str, self.first_cords)),
                 'l': 'map',
                 'z': self.z
             }
@@ -42,6 +42,24 @@ class MainWindow(QMainWindow):
                 file.write(response.content)
             self.pixmap = QPixmap('map.jpg')
             self.img.setPixmap(self.pixmap)
+            self.img.setFocus()
+        except Exception:
+            pass
+
+    def onlyStatic(self):
+        try:
+            static_link = 'https://static-maps.yandex.ru/1.x'
+            params_static = {
+                'll': ','.join(map(str, self.first_cords)),
+                'l': 'map',
+                'z': self.z
+            }
+            response = requests.get(static_link, params_static)
+            with open('map.jpg', 'wb') as file:
+                file.write(response.content)
+            self.pixmap = QPixmap('map.jpg')
+            self.img.setPixmap(self.pixmap)
+            self.img.setFocus()
         except Exception:
             pass
 
@@ -50,7 +68,15 @@ class MainWindow(QMainWindow):
             self.z += 1
         if event.key() == Qt.Key_PageDown:
             self.z -= 1
-        self.fine_new()
+        if event.key() == Qt.Key_Up:
+            self.first_cords = (self.first_cords[0], self.first_cords[1] + 1/self.z)
+        if event.key() == Qt.Key_Down:
+            self.first_cords = (self.first_cords[0], self.first_cords[1] - 1/self.z)
+        if event.key() == Qt.Key_Left:
+            self.first_cords = (self.first_cords[0] - 1/self.z, self.first_cords[1])
+        if event.key() == Qt.Key_Right:
+            self.first_cords = (self.first_cords[0] + 1/self.z, self.first_cords[1])
+        self.onlyStatic()
 
 
 if __name__ == '__main__':
