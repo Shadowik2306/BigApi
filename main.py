@@ -16,10 +16,12 @@ class MainWindow(QMainWindow):
         uic.loadUi('ui/untitled.ui', self)
         self.z = 7
         self.l = 'map'
+        self.change = [0, 0]
         self.view.clicked.connect(self.change_view)
         self.search.clicked.connect(self.fine_new)
 
     def fine_new(self):
+        self.change = [0, 0]
         if len(self.place.text()) < 4:
             return
         geo_link = 'https://geocode-maps.yandex.ru/1.x'
@@ -33,6 +35,7 @@ class MainWindow(QMainWindow):
             toponym = response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
             self.first_cords = tuple(map(float, toponym['Point']['pos'].split()))
             self.onlyStatic()
+            self.img.setFocus()
         except Exception:
             pass
 
@@ -40,7 +43,8 @@ class MainWindow(QMainWindow):
         try:
             static_link = 'https://static-maps.yandex.ru/1.x'
             params_static = {
-                'll': ','.join(map(str, self.first_cords)),
+                'll': ','.join(map(str, (self.first_cords[0] + self.change[0],
+                                         self.first_cords[1] + self.change[1]))),
                 'l': self.l,
                 'z': self.z,
                 'pt': f'{self.first_cords[0]},{self.first_cords[1]},pm2rdm'
@@ -65,13 +69,13 @@ class MainWindow(QMainWindow):
         if event.key() == Qt.Key_PageDown:
             self.z -= 1
         if event.key() == Qt.Key_Up:
-            self.first_cords = (self.first_cords[0], self.first_cords[1] + k)
+            self.change[1] += k
         if event.key() == Qt.Key_Down:
-            self.first_cords = (self.first_cords[0], self.first_cords[1] - k)
+            self.change[1] -= k
         if event.key() == Qt.Key_Left:
-            self.first_cords = (self.first_cords[0] - k, self.first_cords[1])
+            self.change[0] -= k
         if event.key() == Qt.Key_Right:
-            self.first_cords = (self.first_cords[0] + k, self.first_cords[1])
+            self.change[0] += k
         self.onlyStatic()
 
 
