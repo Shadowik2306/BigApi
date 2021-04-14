@@ -1,6 +1,8 @@
 from PyQt5.QtWidgets import QMainWindow,QApplication
 from PyQt5 import QtWidgets, QtGui, QtCore, uic
 from PyQt5.QtGui import QPixmap
+import keyboard
+from PyQt5.QtCore import Qt
 import requests
 import sys
 
@@ -13,7 +15,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         uic.loadUi('ui/untitled.ui', self)
-        self.place.textChanged.connect(self.fine_new)
+        self.z = 7
+        self.search.clicked.connect(self.fine_new)
 
     def fine_new(self):
         if len(self.place.text()) < 4:
@@ -21,8 +24,8 @@ class MainWindow(QMainWindow):
         geo_link = 'https://geocode-maps.yandex.ru/1.x'
         params_geo = {
             'geocode': self.place.text(),
-            'apikey': '40d1649f-0493-4b70-98ba-98533de7710b',
-            'format': 'json'
+            'apikey': '33c50873-3bf9-406f-8799-464a3980ef2d',
+            'format': 'json',
         }
         response = requests.get(geo_link, params_geo).json()
         try:
@@ -32,6 +35,7 @@ class MainWindow(QMainWindow):
             params_static = {
                 'll': ','.join(map(str, first_cords)),
                 'l': 'map',
+                'z': self.z
             }
             response = requests.get(static_link, params_static)
             with open('map.jpg', 'wb') as file:
@@ -40,6 +44,13 @@ class MainWindow(QMainWindow):
             self.img.setPixmap(self.pixmap)
         except Exception:
             pass
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_PageUp:
+            self.z += 1
+        if event.key() == Qt.Key_PageDown:
+            self.z -= 1
+        self.fine_new()
 
 
 if __name__ == '__main__':
