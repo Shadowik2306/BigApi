@@ -36,7 +36,11 @@ class MainWindow(QMainWindow):
         response = requests.get(geo_link, params_geo).json()
         try:
             toponym = response['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']
-            self.addressLabel.setText(toponym['metaDataProperty']['GeocoderMetaData']['Address']['formatted'])
+            address = toponym['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
+            if self.indexCheckBox.isChecked():
+                address += " " + \
+                           toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
+            self.addressLabel.setText(address)
             self.first_cords = tuple(map(float, toponym['Point']['pos'].split()))
             self.onlyStatic()
             self.img.setFocus()

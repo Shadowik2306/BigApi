@@ -90,6 +90,13 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="0">
+       <widget class="QCheckBox" name="indexCheckBox">
+        <property name="text">
+         <string>Index</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
