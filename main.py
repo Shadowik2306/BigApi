@@ -4,10 +4,31 @@ from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 import requests
 import sys
+import math
 
 
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
+
+
+def lonlat_distance(a, b):
+
+    degree_to_meters_factor = 111 * 1000 # 111 километров в метрах
+    a_lon, a_lat = a
+    b_lon, b_lat = b
+
+    # Берем среднюю по широте точку и считаем коэффициент для нее.
+    radians_lattitude = math.radians((a_lat + b_lat) / 2.)
+    lat_lon_factor = math.cos(radians_lattitude)
+
+    # Вычисляем смещения в метрах по вертикали и горизонтали.
+    dx = abs(a_lon - b_lon) * degree_to_meters_factor * lat_lon_factor
+    dy = abs(a_lat - b_lat) * degree_to_meters_factor
+
+    # Вычисляем расстояние между точками.
+    distance = math.sqrt(dx * dx + dy * dy)
+
+    return distance
 
 
 class MainWindow(QMainWindow):
@@ -107,6 +128,16 @@ class MainWindow(QMainWindow):
             self.change[0] += k
         self.onlyStatic()
 
+    def mousePressEvent(self, event):
+        center = (320, 266)
+        if event.x() in range(18, 621):
+            if event.y() in range(40, 495):
+                print(f"Координаты: {event.x() - center[0]}, {event.y() - center[1]}")
+                k1 = (17 - (event.x() - center[0])) * 10 ** -2
+                k2 = (17 - (event.y() - center[1])) * 10 ** -2
+                self.first_cords = (self.first_cords[0] - k1, self.first_cords[1] + k2)
+                self.change = [0, 0]
+                self.onlyStatic()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
