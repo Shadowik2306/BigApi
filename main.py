@@ -65,7 +65,6 @@ class MainWindow(QMainWindow):
                         toponym['metaDataProperty']['GeocoderMetaData']['Address']['postal_code']
             except Exception:
                 self.index = ''
-
             if self.indexCheckBox.isChecked():
                 self.addressLabel.setText(self.address + self.index)
             else:
@@ -137,7 +136,32 @@ class MainWindow(QMainWindow):
                 k2 = (17 - (event.y() - center[1])) * 10 ** -2
                 self.first_cords = (self.first_cords[0] - k1, self.first_cords[1] + k2)
                 self.change = [0, 0]
+                geo_link = 'https://geocode-maps.yandex.ru/1.x'
+                params_geo = {
+                    'geocode': ','.join(map(str, self.first_cords)),
+                    'apikey': '33c50873-3bf9-406f-8799-464a3980ef2d',
+                    'format': 'json',
+                }
+                response = requests.get(geo_link, params_geo).json()
+                try:
+                    toponym = response['response']['GeoObjectCollection']['featureMember'][0][
+                        'GeoObject']
+                    self.address = toponym['metaDataProperty']['GeocoderMetaData']['Address'][
+                        'formatted']
+                    try:
+                        self.index += " " + \
+                                        toponym['metaDataProperty']['GeocoderMetaData']['Address'][
+                                              'postal_code']
+                    except Exception:
+                        self.index = ''
+                    if self.indexCheckBox.isChecked():
+                        self.addressLabel.setText(self.address + self.index)
+                    else:
+                        self.addressLabel.setText(self.address)
+                except Exception:
+                    pass
                 self.onlyStatic()
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
